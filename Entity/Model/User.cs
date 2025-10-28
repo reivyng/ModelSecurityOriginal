@@ -1,12 +1,12 @@
 ﻿namespace Entity.Model
 {
-    public class UserDto : Base
+    public class User : Base
     {
         public string email { get; set; }
         public string password { get; set; }
-        public int role_id { get; set; }
+        public int rol_id { get; set; }
         public int person_id { get; set; }
-        public RolDto rol { get; set; }
-        public PersonDto person { get; set; }
+        public Rol Rol { get; set; }
+        public Person Person { get; set; }
     }
 }

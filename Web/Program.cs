@@ -28,7 +28,7 @@ builder.Services.AddSingleton<IValidatorFactory>(sp =>
 builder.Services.AddSwaggerDocumentation();
 
 // DbContext
-var dbProvider = builder.Configuration["DatabaseProvider"] ?? "SqlServer";
+var dbProvider = builder.Configuration["DatabaseProvider"] ;
 var connStrings = builder.Configuration.GetSection("ConnectionStrings");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -116,7 +116,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Inicializar base de datos y aplicar migraciones
-await InitializeDatabaseAsync(app.Services);
+//await InitializeDatabaseAsync(app.Services);
 
 app.Run();
 

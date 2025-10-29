@@ -4,6 +4,7 @@ namespace Data.Interfaces
 {
     public interface IUserData : IBaseData<User>
     {
-        // Métodos adicionales específicos de User si se requieren
+        // Obtener usuarios con filtros específicos de User
+        Task<List<User>> GetAllAsync(bool? active, string? emailSearch);
     }
 }

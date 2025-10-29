@@ -22,6 +22,8 @@ namespace Business.Implements
         /// cuando se completa correctamente.
         /// </returns>
         public abstract Task<List<D>> GetAllAsync();
+        
+    
 
         /// <summary>
         /// Recupera una entidad espec?fica por su identificador ?nico.

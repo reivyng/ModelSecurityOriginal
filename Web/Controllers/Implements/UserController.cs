@@ -16,13 +16,14 @@ namespace Web.Controllers.Implements
         protected override int GetEntityId(UserDto dto) => dto.Id;
 
         /// <summary>
-        /// Obtiene todos los usuarios, con filtros opcionales por estado activo y búsqueda por correo.
+        /// Obtiene usuarios filtrados por estado activo y búsqueda por correo.
+        /// Ruta: GET api/User/filter
         /// Parámetros de consulta:
         /// - active: filtra por campo `active` del DTO (true/false)
         /// - email: búsqueda por correo electrónico
         /// </summary>
-        [HttpGet]
-        public override async Task<IActionResult> GetAll([FromQuery] bool? active, [FromQuery] string? email)
+        [HttpGet("filter")]
+        public async Task<IActionResult> Filter([FromQuery] bool? active, [FromQuery] string? email)
         {
             try
             {

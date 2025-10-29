@@ -8,7 +8,7 @@ using Business.Interfaces;
 using Business.Implements;
 using Web.ServiceExtension;
 using FluentValidation;
-¿using Data.Implements;
+using Data.Implements;
 using Data.Implements.BaseData;
 using Entity.Context;
 using Utilities.Mappers.Profiles;

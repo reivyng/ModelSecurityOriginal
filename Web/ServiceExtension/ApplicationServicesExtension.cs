@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using AutoMapper;
 
 namespace Web.ServiceExtension
 {
@@ -8,22 +9,21 @@ namespace Web.ServiceExtension
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // Registra validadores
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-            // Configura CORS
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigins", builder =>
                 {
-                    builder.WithOrigins(configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new string[] { "http://localhost:3000" })
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
+                    var allowedOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+                        ?? new[] { "http://localhost:5173", "http://localhost:3000" }; // Por defecto para React o Vite
+
+                    builder.WithOrigins(allowedOrigins)
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
                 });
             });
 
-            // Registra AutoMapper
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             return services;
         }

@@ -1,6 +1,6 @@
 ﻿namespace Entity.Model
 {
-    public class Person : Base
+    public class Person : BaseModel
     {
         public int Id { get; set; }
         public string first_name { get; set; }

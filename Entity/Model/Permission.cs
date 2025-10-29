@@ -1,6 +1,6 @@
 ﻿namespace Entity.Model
 {
-    public class Permission : Base
+    public class Permission : BaseModel
     {
         public string type_permission { get; set; }
         public string description { get; set; }

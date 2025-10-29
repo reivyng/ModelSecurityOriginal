@@ -1,6 +1,6 @@
 ﻿namespace Entity.Model
 {
-    public class Form : Base
+    public class Form : BaseModel
     {
         public string name { get; set; }
         public string description { get; set; }

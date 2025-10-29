@@ -1,6 +1,6 @@
 ﻿namespace Entity.Model
 {
-    public class User : Base
+    public class User : BaseModel
     {
         public string email { get; set; }
         public string password { get; set; }

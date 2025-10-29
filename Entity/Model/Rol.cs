@@ -1,6 +1,6 @@
 ﻿namespace Entity.Model
 {
-    public class Rol : Base
+    public class Rol : BaseModel
     {
         public string type_rol { get; set; }
         public string description { get; set; }

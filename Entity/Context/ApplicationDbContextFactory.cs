@@ -3,18 +3,22 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
+
+
 
 namespace Entity.Context.DesignTime
 {
     // Factory para crear AplicationdbContext en tiempo de diseño (migraciones).
     // Lee appsettings.json y permite pasar el proveedor como argumento.
-    public class AplicationdbContextFactory : IDesignTimeDbContextFactory<AplicationdbContext>
+    public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
-        public AplicationdbContext CreateDbContext(string[] args)
+        public ApplicationDbContext CreateDbContext(string[] args)
         {
             var basePath = Directory.GetCurrentDirectory();
             var config = new ConfigurationBuilder()
-                .SetBasePath(basePath)
+                .SetBasePath(basePath) // Ensure Microsoft.Extensions.FileProviders is referenced
                 .AddJsonFile("appsettings.json", optional: true)
                 .AddEnvironmentVariables()
                 .Build();
@@ -33,7 +37,7 @@ namespace Entity.Context.DesignTime
 
             var connectionString = config[connKey] ?? throw new InvalidOperationException($"No se encontró la cadena: {connKey}");
 
-            var optionsBuilder = new DbContextOptionsBuilder<AplicationdbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
             switch (provider)
             {
@@ -48,7 +52,7 @@ namespace Entity.Context.DesignTime
                     break;
             }
 
-            return new AplicationdbContext(optionsBuilder.Options);
+            return new ApplicationDbContext(optionsBuilder.Options);
         }
     }
 }

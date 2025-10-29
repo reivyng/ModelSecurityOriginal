@@ -10,12 +10,12 @@ using Module = Entity.Model.Module;
 
 namespace Entity.Context
 {
-    public class AplicationdbContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
-        public AplicationdbContext(DbContextOptions<AplicationdbContext>options) 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext>options) 
         : base (options){ }
 
-        public AplicationdbContext() { }
+        public ApplicationDbContext() { }
 
         public DbSet<Module> Modules { get; set; }
         public DbSet<User> Users { get; set; }

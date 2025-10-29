@@ -1,6 +1,6 @@
 ﻿namespace Entity.Model
 {
-    public class RolFormPermission : Base
+    public class RolFormPermission : BaseModel
     {
         public int rol_id { get; set; }
         public int form_id { get; set; }

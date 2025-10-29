@@ -1,6 +1,6 @@
 ﻿namespace Entity.Model
 {
-    public class FormModule : Base
+    public class FormModule : BaseModel
     {
         public  int form_id { get; set; }
         public  int module_id { get; set; }

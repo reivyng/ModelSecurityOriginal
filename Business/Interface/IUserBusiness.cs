@@ -6,6 +6,7 @@ namespace Business.Interfaces
 {
     public interface IUserBusiness : IBaseBusiness<User, UserDto>
     {
-        // Métodos adicionales específicos de User si se requieren
+        // Obtener usuarios con filtros específicos de User
+        Task<List<UserDto>> GetAllAsync(bool? active, string? emailSearch);
     }
 }

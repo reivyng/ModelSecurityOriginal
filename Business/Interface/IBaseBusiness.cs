@@ -16,6 +16,8 @@ namespace Business.Interfaces
         /// <returns>Una colecci�n de objetos de tipo <typeparamref name="D"/>.</returns>
         Task<List<D>> GetAllAsync();
 
+    
+
         /// <summary>
         /// Obtiene todos los datos en forma de DTO.
         /// </summary>

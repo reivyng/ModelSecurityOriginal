@@ -14,6 +14,8 @@ namespace Business.Implements
     {
 
         public abstract Task<List<D>> GetAllAsync();
+        
+    
 
         /// <summary>
         /// Recupera una entidad espec?fica por su identificador ?nico.

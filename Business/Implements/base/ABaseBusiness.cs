@@ -13,14 +13,6 @@ namespace Business.Implements
     public abstract class ABaseBusiness<T, D> : IBaseBusiness<T, D> where T : BaseModel where D : BaseDto
     {
 
-
-        /// <summary>
-        /// Obtiene una colecci?n de todas las entidades del tipo especificado.
-        /// </summary>
-        /// <returns>
-        /// Tarea asincrona que representa la operaci?n y contiene una colecci?n de entidades 
-        /// cuando se completa correctamente.
-        /// </returns>
         public abstract Task<List<D>> GetAllAsync();
 
         /// <summary>
@@ -52,6 +44,12 @@ namespace Business.Implements
         /// cuando se completa correctamente.
         /// </returns>
         public abstract Task<D> UpdateAsync(D dto);
+
+
+        /// <summary>
+        /// Actualiza parcialmente una entidad (PATCH) aplicando solo los campos modificados.
+        /// </summary>
+        public abstract Task<bool> PatchAsync(object id, D patchDto, List<string> presentProps);
 
         /// <summary>
         /// Elimina una entidad de la fuente de datos por su identificador ?nico.

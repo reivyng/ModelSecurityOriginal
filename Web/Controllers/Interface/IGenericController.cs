@@ -9,6 +9,7 @@ namespace Web.Controllers.Interface
         Task<IActionResult> GetById(int id);
         Task<IActionResult> Create(TDto dto);
         Task<IActionResult> Update(TDto dto);
+        Task<IActionResult> Patch(object id, [FromBody] object patchValues);
         Task<IActionResult> Delete(int id);
         Task<IActionResult> SoftActive(int id);
     }

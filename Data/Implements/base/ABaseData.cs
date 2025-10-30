@@ -33,6 +33,7 @@ namespace Data.Implements.BaseData
         public abstract Task<T> GetByIdAsync(int id);
         public abstract Task<T> CreateAsync(T entity);
         public abstract Task<T> UpdateAsync(T entity);
+        public abstract Task<bool> PatchAsync(object id, Action<T> patchValues);
         public abstract Task<bool> DeleteAsync(int id);
         public abstract Task<bool> SoftDeleteAsync(int id);
 

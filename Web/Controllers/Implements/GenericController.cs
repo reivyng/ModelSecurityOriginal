@@ -2,6 +2,7 @@
 using Entity.Dto;
 using Entity.Model;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Exceptions;
 
 
 namespace Web.Controllers.Implements
@@ -102,6 +103,45 @@ namespace Web.Controllers.Implements
                 return StatusCode(500, "Error interno del servidor");
             }
         }
+
+        [HttpPatch("{id}")]
+        public virtual async Task<IActionResult> Patch([FromRoute] int id, [FromBody] TDto patchDto)
+        {
+            try
+            {
+                // Obtener el body crudo para saber qué propiedades fueron enviadas
+                string rawBody = string.Empty;
+                using (var reader = new StreamReader(Request.Body))
+                {
+                    Request.Body.Position = 0;
+                    rawBody = await reader.ReadToEndAsync();
+                }
+                var presentProps = new List<string>();
+                if (!string.IsNullOrEmpty(rawBody))
+                {
+                    var json = System.Text.Json.JsonDocument.Parse(rawBody);
+                    foreach (var prop in json.RootElement.EnumerateObject())
+                    {
+                        presentProps.Add(prop.Name);
+                    }
+                }
+
+                var result = await _business.PatchAsync(id, patchDto, presentProps);
+                if (!result)
+                    return NotFound(new { message = "Entidad no encontrada o no se pudo actualizar." });
+
+                return NoContent();
+            }
+            catch (BusinessException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno.", detail = ex.Message });
+            }
+        }
+
 
         [HttpDelete("{id}")]
         public virtual async Task<IActionResult> Delete(int id)

@@ -130,6 +130,42 @@ namespace Business.Implements
             }
         }
 
+        /// <summary>
+        /// Actualiza parcialmente una entidad (PATCH) aplicando solo los campos modificados.
+        /// </summary>
+        public override async Task<bool> PatchAsync(object id, D patchDto)
+        {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id), "El identificador no puede ser nulo.");
+            if (patchDto == null)
+                throw new ArgumentNullException(nameof(patchDto), "El DTO de patch no puede ser nulo.");
+
+            var entity = await _data.GetByIdAsync(Convert.ToInt32(id));
+            if (entity == null)
+                return false;
+
+
+            foreach (var propDto in typeof(D).GetProperties())
+            {
+                var value = propDto.GetValue(patchDto);
+                if (value == null)
+                    continue;
+
+                // Si es string, solo actualiza si no es vacío ni solo espacios 
+                if (propDto.PropertyType == typeof(string) && string.IsNullOrWhiteSpace((string)value))
+                    continue;
+
+                var propEntity = typeof(T).GetProperty(propDto.Name);
+                if (propEntity != null && propEntity.CanWrite)
+                {
+                    propEntity.SetValue(entity, value);
+                }
+            }
+
+            await _data.UpdateAsync(entity);
+            return true;
+        }
+
         /// <inheritdoc />
         public override async Task<bool> DeleteAsync(int id)
         {

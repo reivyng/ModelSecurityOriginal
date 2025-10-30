@@ -38,14 +38,17 @@ namespace Business.Interfaces
         /// <returns>El DTO actualizado o una excepci�n si falla.</returns>
         Task<D> UpdateAsync(D dto);
 
+        /// <summary>
+        /// Actualiza parcialmente una entidad (PATCH) aplicando solo los campos modificados.
+        /// </summary>
+        Task<bool> PatchAsync(object id, D patchDto, List<string> presentProps);
+
         ///<summary>
         /// Elimina permanentemente un registro del sistema.
         ///</summary>
         ///<param name= "id">Identificador del registro a marcar como eliminado</param>
         ///<returns>True si la operaci�n fue exitosa; false en caso contrario </returns>
         Task<bool> DeleteAsync(int id);
-
-
 
         /// <summary>
         /// Elimina lógicamente un registro del sistema (cambio de estado a inactivo)

@@ -43,6 +43,10 @@ namespace Data.Interfaces
         /// <returns></returns>
         Task<T> UpdateAsync(T entity);
 
+        /// <summary>
+        /// Actualiza parcialmente una entidad (PATCH) aplicando solo los campos modificados.
+        /// </summary>
+        Task<bool> PatchAsync(object id, Action<T> patchValues);
 
         /// <summary>
         /// Eliminación concreta o absoluta

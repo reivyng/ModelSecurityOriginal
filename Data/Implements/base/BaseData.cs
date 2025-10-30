@@ -43,6 +43,23 @@ namespace Data.Implements.BaseData
             return entity;
         }
 
+        /// <summary>
+        /// Actualiza parcialmente una entidad (PATCH) aplicando solo los campos modificados.
+        /// </summary>
+        /// <param name="id">Identificador de la entidad.</param>
+        /// <param name="patchValues">Acción que aplica los cambios sobre la entidad encontrada.</param>
+        public override async Task<bool> PatchAsync(object id, Action<T> patchValues)
+        {
+            var entity = await _context.Set<T>().FindAsync(id);
+            if (entity == null)
+                return false;
+
+            patchValues(entity);
+            _context.Set<T>().Update(entity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
 
         public override  async Task<bool> DeleteAsync(int id)
         {

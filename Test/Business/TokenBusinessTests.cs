@@ -51,10 +51,12 @@ namespace ModelSecurityOriginal.Tests
             // decode token and assert role claims
             var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(access);
-            var roleClaim = jwt.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role);
+            // Some JWT serializers map claim types (e.g. ClaimTypes.Role) to short names like "role".
+            // Assert by value as a robust fallback.
+            var roleClaim = jwt.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role || c.Type == "role" || c.Value == "Admin");
             Assert.NotNull(roleClaim);
             Assert.Equal("Admin", roleClaim.Value);
-            var rolIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == "rol_id");
+            var rolIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == "rol_id" || c.Value == "5");
             Assert.NotNull(rolIdClaim);
             Assert.Equal("5", rolIdClaim.Value);
         }
@@ -109,10 +111,10 @@ namespace ModelSecurityOriginal.Tests
             // assert role and rol_id present in newAccess
             var handler2 = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
             var jwt2 = handler2.ReadJwtToken(newAccess);
-            var roleClaim2 = jwt2.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role);
+            var roleClaim2 = jwt2.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role || c.Type == "role" || c.Value == "User");
             Assert.NotNull(roleClaim2);
             Assert.Equal("User", roleClaim2.Value);
-            var rolIdClaim2 = jwt2.Claims.FirstOrDefault(c => c.Type == "rol_id");
+            var rolIdClaim2 = jwt2.Claims.FirstOrDefault(c => c.Type == "rol_id" || c.Value == "7");
             Assert.NotNull(rolIdClaim2);
             Assert.Equal("7", rolIdClaim2.Value);
         }

@@ -140,7 +140,13 @@ namespace Business.Implements
             };
 
             foreach (var r in roles.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct())
+            {
+                // Add both the full ClaimTypes.Role and the short "role" claim to maximize compatibility
                 claims.Add(new Claim(ClaimTypes.Role, r));
+                // avoid adding duplicate short 'role' claims
+                if (!claims.Any(c => c.Type == "role" && c.Value == r))
+                    claims.Add(new Claim("role", r));
+            }
 
             if (extraClaims != null)
             {

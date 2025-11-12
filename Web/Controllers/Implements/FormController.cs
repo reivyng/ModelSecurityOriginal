@@ -9,8 +9,13 @@ namespace Web.Controllers.Implements
     [Route("api/[controller]")]
     public class FormController : GenericController<FormDto, Form>
     {
-        public FormController(IFormBusiness business, ILogger<FormController> logger)
-            : base(business, logger) { }
+        private readonly IFormBusiness _formBusiness;
+
+        public FormController(IFormBusiness formBusiness, ILogger<FormController> logger)
+            : base(formBusiness, logger)
+        {
+            _formBusiness = formBusiness;
+        }
 
         protected override int GetEntityId(FormDto dto) => dto.Id;
     }

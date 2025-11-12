@@ -9,8 +9,13 @@ namespace Web.Controllers.Implements
     [Route("api/[controller]")]
     public class PersonController : GenericController<PersonDto, Person>
     {
-        public PersonController(IPersonBusiness business, ILogger<PersonController> logger)
-            : base(business, logger) { }
+        private readonly IPersonBusiness _personBusiness;
+
+        public PersonController(IPersonBusiness personBusiness, ILogger<PersonController> logger)
+            : base(personBusiness, logger)
+        {
+            _personBusiness = personBusiness;
+        }
 
         protected override int GetEntityId(PersonDto dto) => dto.Id;
     }

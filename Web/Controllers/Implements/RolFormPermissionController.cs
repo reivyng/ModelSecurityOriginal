@@ -9,9 +9,23 @@ namespace Web.Controllers.Implements
     [Route("api/[controller]")]
     public class RolFormPermissionController : GenericController<RolFormPermissionDto, RolFormPermission>
     {
-        public RolFormPermissionController(IRolFormPermissionBusiness business, ILogger<RolFormPermissionController> logger)
-            : base(business, logger) { }
+        private readonly IRolFormPermissionBusiness _rfpBusiness;
+
+        public RolFormPermissionController(IRolFormPermissionBusiness rfpBusiness, ILogger<RolFormPermissionController> logger)
+            : base(rfpBusiness, logger)
+        {
+            _rfpBusiness = rfpBusiness;
+        }
 
         protected override int GetEntityId(RolFormPermissionDto dto) => dto.Id;
+
+
+        [HttpGet("menu/{userId}")]
+        public async Task<IActionResult> Menu(int userId)
+        {
+            var menu = await _rfpBusiness.ObtenerMenu(userId);
+            return Ok(menu);
+        }
+
     }
 }

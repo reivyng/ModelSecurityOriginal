@@ -9,8 +9,13 @@ namespace Web.Controllers.Implements
     [Route("api/[controller]")]
     public class RolController : GenericController<RolDto, Rol>
     {
-        public RolController(IRolBusiness business, ILogger<RolController> logger)
-            : base(business, logger) { }
+        private readonly IRolBusiness _rolBusiness;
+
+        public RolController(IRolBusiness rolBusiness, ILogger<RolController> logger)
+            : base(rolBusiness, logger)
+        {
+            _rolBusiness = rolBusiness;
+        }
 
         protected override int GetEntityId(RolDto dto) => dto.Id;
     }

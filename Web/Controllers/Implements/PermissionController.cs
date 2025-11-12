@@ -9,8 +9,13 @@ namespace Web.Controllers.Implements
     [Route("api/[controller]")]
     public class PermissionController : GenericController<PermissionDto, Permission>
     {
+        private readonly IPermissionBusiness _business;
+
         public PermissionController(IPermissionBusiness business, ILogger<PermissionController> logger)
-            : base(business, logger) { }
+            : base(business, logger)
+        {
+            _business = business;
+        }
 
         protected override int GetEntityId(PermissionDto dto) => dto.Id;
     }

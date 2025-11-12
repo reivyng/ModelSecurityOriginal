@@ -12,6 +12,9 @@ namespace Web.Controllers.Implements
         public UserController(IUserBusiness business, ILogger<UserController> logger)
             : base(business, logger) { }
 
-        protected override int GetEntityId(UserDto dto) => dto.Id;
+        protected override int GetEntityId(UserDto dto)
+        {
+            return dto.Id;
+        }
     }
 }

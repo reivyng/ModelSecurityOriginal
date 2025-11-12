@@ -20,7 +20,7 @@ using Entity.Dto.Auth;
 
 namespace Business.Implements
 {
-    public class TokenService : ITokenService
+    public class TokenService : ITokenBusiness
     {
         private readonly IUserData _userData;
         private readonly IRefreshTokenData _refreshData;

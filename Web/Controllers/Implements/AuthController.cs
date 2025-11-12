@@ -2,6 +2,7 @@ using Business.Interfaces;
 using Data.Interfaces;
 using Entity.Dto.Auth;
 using Entity.Model;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Entity.Domain.Config;
@@ -14,17 +15,17 @@ namespace Web.Controllers.Implements
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserData _userData;
         private readonly IRefreshTokenData _refreshData;
-        private readonly ITokenService _tokenService;
+        private readonly ITokenBusiness _tokenService;
         private readonly JwtSettings _jwt;
+        private readonly Business.Interfaces.IAuthBusiness _authService;
 
-        public AuthController(IUserData userData, IRefreshTokenData refreshData, ITokenService tokenService, IOptions<JwtSettings> jwtOptions)
+        public AuthController(IRefreshTokenData refreshData, ITokenBusiness tokenService, IOptions<JwtSettings> jwtOptions, Business.Interfaces.IAuthBusiness authService)
         {
-            _userData = userData;
             _refreshData = refreshData;
             _tokenService = tokenService;
             _jwt = jwtOptions.Value;
+            _authService = authService;
         }
 
         [HttpPost("register")]
@@ -32,27 +33,8 @@ namespace Web.Controllers.Implements
         {
             if (dto.password != dto.confirm_password) return BadRequest(new { message = "Passwords do not match" });
 
-            var userExists = await _userData.FindByEmailAsync(dto.email);
-            if (userExists != null) return BadRequest(new { message = "Email already registered" });
-
-            // Create person and user
-            var person = new Person
-            {
-                first_name = dto.first_name,
-                first_last_name = dto.first_last_name,
-                phone_number = dto.phone_number,
-                number_identification = dto.number_identification
-            };
-
-            var user = new User
-            {
-                email = dto.email,
-                password = BCrypt.Net.BCrypt.HashPassword(dto.password),
-                Person = person,
-                active = true
-            };
-
-            await _userData.CreateAsync(user);
+            var created = await _authService.RegisterAsync(dto);
+            if (!created) return BadRequest(new { message = "Email already registered or registration failed" });
 
             return Ok(new { isSuccess = true });
         }

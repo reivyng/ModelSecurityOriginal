@@ -68,8 +68,8 @@ namespace Entity.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     first_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     first_last_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    phone_number = table.Column<int>(type: "int", nullable: false),
-                    number_identification = table.Column<int>(type: "int", nullable: false),
+                    phone_number = table.Column<long>(type: "bigint", nullable: false),
+                    number_identification = table.Column<long>(type: "bigint", nullable: false),
                     active = table.Column<bool>(type: "bit", nullable: false),
                     delete_at = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },

@@ -5,7 +5,7 @@ using Entity.Dto.Auth;
 
 namespace Business.Interfaces
 {
-    public interface ITokenService
+    public interface ITokenBusiness
     {
         Task<(string AccessToken, string RefreshToken)> GenerateTokensAsync(LoginUserDto dto);
         Task<(string NewAccessToken, string NewRefreshToken)> RefreshAsync(string refreshTokenPlain);

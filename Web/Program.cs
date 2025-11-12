@@ -48,7 +48,10 @@ builder.Services.AddScoped<IUserData, UserData>();
 builder.Services.AddScoped<IUserBusiness, UserBusiness>();
 // Refresh token data and token service
 builder.Services.AddScoped<IRefreshTokenData, RefreshTokenData>();
-builder.Services.AddScoped<Business.Interfaces.ITokenService, Business.Implements.TokenService>();
+builder.Services.AddScoped<Business.Interfaces.ITokenBusiness, Business.Implements.TokenService>();
+
+// Auth service (registration logic)
+builder.Services.AddScoped<Business.Interfaces.IAuthBusiness, Business.Implements.AuthService>();
 
 // Jwt settings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));

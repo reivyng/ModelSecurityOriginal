@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entity.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251112005750_InitialCreate")]
+    [Migration("20251112072531_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -161,11 +161,11 @@ namespace Entity.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("number_identification")
-                        .HasColumnType("int");
+                    b.Property<long>("number_identification")
+                        .HasColumnType("bigint");
 
-                    b.Property<int>("phone_number")
-                        .HasColumnType("int");
+                    b.Property<long>("phone_number")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 

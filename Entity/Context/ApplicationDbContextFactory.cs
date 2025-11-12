@@ -26,7 +26,7 @@ namespace Entity.Context.DesignTime
             // provider puede venir en args (dotnet ef ... -- MySql) o de appsettings: DatabaseProvider
             var provider = args != null && args.Length > 0 && !string.IsNullOrEmpty(args[0])
                 ? args[0]
-                : config["DatabaseProvider"] ?? "MySql";
+                : config["MigrationProvider"] ?? "MySql";
 
             string connKey = provider switch
             {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Entity.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -67,9 +67,7 @@ namespace Entity.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     first_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    second_name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     first_last_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    second_last_name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     phone_number = table.Column<int>(type: "int", nullable: false),
                     number_identification = table.Column<int>(type: "int", nullable: false),
                     active = table.Column<bool>(type: "bit", nullable: false),
@@ -78,6 +76,26 @@ namespace Entity.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Persons", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    token_hash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    expires_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_revoked = table.Column<bool>(type: "bit", nullable: false),
+                    replaced_by_token_hash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    active = table.Column<bool>(type: "bit", nullable: false),
+                    delete_at = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -231,6 +249,9 @@ namespace Entity.Migrations
         {
             migrationBuilder.DropTable(
                 name: "FormModules");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "RolFormPermissions");

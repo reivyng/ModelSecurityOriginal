@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Entity.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -7,15 +7,11 @@ using System.Data;
 using System.Reflection;
 using Module = Entity.Model.Module;
 
-
 namespace Entity.Context
 {
-    public class ApplicationDbContext : DbContext
+    public class PostgresDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext>options) 
-        : base (options){ }
-
-        public ApplicationDbContext() { }
+        public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options) { }
 
         public DbSet<Module> Modules { get; set; }
         public DbSet<User> Users { get; set; }
@@ -25,7 +21,7 @@ namespace Entity.Context
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolFormPermission> RolFormPermissions { get; set; }
         public DbSet<Person> Persons { get; set; }
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,14 +51,14 @@ namespace Entity.Context
                 .HasForeignKey(rfp => rfp.permission_id);
 
             modelBuilder.Entity<User>()
-                .HasOne(u => u.Rol) //Un usuario tiene un Rol
-                .WithMany(r => r.User) //Un Rol tiene muchos usuarios 
-                .HasForeignKey(u => u.rol_id); //User LLeva la Foranea
+                .HasOne(u => u.Rol)
+                .WithMany(r => r.User)
+                .HasForeignKey(u => u.rol_id);
 
             modelBuilder.Entity<Person>()
-                .HasOne(p => p.User) //Una persona tiene un usuario
-                .WithOne(u => u.Person) //Un usuario pertenece a una persona 
-                .HasForeignKey<User>(u => u.person_id); //User lleva la Foranea
+                .HasOne(p => p.User)
+                .WithOne(u => u.Person)
+                .HasForeignKey<User>(u => u.person_id);
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
@@ -73,24 +69,7 @@ namespace Entity.Context
             configurationBuilder.Properties<decimal>().HavePrecision(18, 2);
         }
 
-        public override int SaveChanges()
-        {
-            EnsureAudit();
-            return base.SaveChanges();
-        }
-
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-        {
-            EnsureAudit();
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
-
-        private void EnsureAudit()
-        {
-            ChangeTracker.DetectChanges();
-        }
-
-        // Métodos Dapper
+        // Dapper helpers (copied from ApplicationDbContext)
         public async Task<IEnumerable<T>> QueryAsync<T>(string text, object? parameters = null, int? timeout = null, CommandType? type = null)
         {
             using var command = new DapperEFCoreCommand(this, text, parameters ?? new { }, timeout, type, CancellationToken.None);
@@ -105,21 +84,8 @@ namespace Entity.Context
             return await connection.QueryFirstOrDefaultAsync<T>(command.Definition);
         }
 
-
-        /// <summary>
-        /// Estructura para ejecutar comandos SQL con Dapper en Entity Framework Core.
-        /// </summary>
         public readonly struct DapperEFCoreCommand : IDisposable
         {
-            /// <summary>
-            /// Constructor del comando Dapper.
-            /// </summary>
-            /// <param name="context">Contexto de la base de datos.</param>
-            /// <param name="text">Consulta SQL.</param>
-            /// <param name="parameters">Parámetros opcionales.</param>
-            /// <param name="timeout">Tiempo de espera opcional.</param>
-            /// <param name="type">Tipo de comando SQL opcional.</param>
-            /// <param name="ct">Token de cancelación.</param>
             public DapperEFCoreCommand(DbContext context, string text, object parameters, int? timeout, CommandType? type, CancellationToken ct)
             {
                 var transaction = context.Database.CurrentTransaction?.GetDbTransaction();
@@ -136,17 +102,9 @@ namespace Entity.Context
                 );
             }
 
-            /// <summary>
-            /// Define los parámetros del comando SQL.
-            /// </summary>
             public CommandDefinition Definition { get; }
 
-            /// <summary>
-            /// Método para liberar los recursos.
-            /// </summary>
-            public void Dispose()
-            {
-            }
+            public void Dispose() { }
         }
     }
 }

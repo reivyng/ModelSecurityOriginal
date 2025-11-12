@@ -13,6 +13,12 @@ using Data.Implements.BaseData;
 using Entity.Context;
 using Utilities.Mappers.Profiles;
 using Data.Interface;
+using Web.Service;
+using Web.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Entity.Domain.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,30 +30,14 @@ builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
 builder.Services.AddSingleton<IValidatorFactory>(sp =>
     new ServiceProviderValidatorFactory(sp));
 
+// Make HttpContext available for per-request DB provider resolution
+builder.Services.AddHttpContextAccessor();
+
 // Swagger
 builder.Services.AddSwaggerDocumentation();
 
-// DbContext
-var dbProvider = builder.Configuration["DatabaseProvider"] ?? "SqlServer";
-var connStrings = builder.Configuration.GetSection("ConnectionStrings");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    switch (dbProvider)
-    {
-        case "MySql":
-            options.UseMySql(
-                connStrings["MySql"],
-                ServerVersion.AutoDetect(connStrings["MySql"]) // Requiere Pomelo.EntityFrameworkCore.MySql
-            );
-            break;
-        case "Postgres":
-            options.UseNpgsql(connStrings["Postgres"]); // Requiere Npgsql.EntityFrameworkCore.PostgreSQL
-            break;
-        default:
-            options.UseSqlServer(connStrings["SqlServer"]);
-            break;
-    }
-});
+// DbContext - register multi-provider service (per-request provider resolution)
+builder.Services.AddDatabase(builder.Configuration);
 
 // Register generic repositories and business logic
 builder.Services.AddScoped(typeof(IBaseData<>), typeof(BaseModelData<>));
@@ -56,6 +46,34 @@ builder.Services.AddScoped(typeof(IBaseBusiness<,>), typeof(BaseBusiness<,>));
 // Registrar servicios para entidades nuevas
 builder.Services.AddScoped<IUserData, UserData>();
 builder.Services.AddScoped<IUserBusiness, UserBusiness>();
+// Refresh token data and token service
+builder.Services.AddScoped<IRefreshTokenData, RefreshTokenData>();
+builder.Services.AddScoped<Business.Interfaces.ITokenService, Business.Implements.TokenService>();
+
+// Jwt settings
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+
+// Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+    };
+});
 
 builder.Services.AddScoped<IPersonBusiness, PersonBusiness>();
 builder.Services.AddScoped<IPersonData, PersonData>();
@@ -93,23 +111,26 @@ builder.Services.AddAutoMapper(cfg => {
 
 var app = builder.Build();
 
+// Middleware that sets the request DB provider from header X-DB-Provider
+app.UseMiddleware<DbContextMiddleware>();
+
 // Swagger (solo en desarrollo)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Sistema de Gestión v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Sistema de Gestiï¿½n v1");
         c.RoutePrefix = string.Empty;
     });
 }
 
-// Usa la política de CORS registrada en ApplicationServiceExtensions
+// Usa la polï¿½tica de CORS registrada en ApplicationServiceExtensions
 app.UseCors("AllowSpecificOrigins");
 
 app.UseHttpsRedirection();
 
-// Autenticación y autorización
+// Autenticaciï¿½n y autorizaciï¿½n
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -160,7 +181,7 @@ static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider)
                 logger.LogInformation("Base de datos eliminada.");
 
                 await dbContext.Database.MigrateAsync();
-                logger.LogInformation("Base de datos recreada con éxito.");
+                logger.LogInformation("Base de datos recreada con ï¿½xito.");
             }
         }
         else
@@ -171,7 +192,7 @@ static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider)
         // Verificar conectividad
         if (await dbContext.Database.CanConnectAsync())
         {
-            logger.LogInformation("Conexión a la base de datos verificada exitosamente.");
+            logger.LogInformation("Conexiï¿½n a la base de datos verificada exitosamente.");
         }
         else
         {
@@ -180,7 +201,7 @@ static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider)
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Error crítico durante la inicialización de la base de datos.");
-        throw; // Re-lanzar para detener la aplicación si no se puede inicializar la BD
+        logger.LogError(ex, "Error crï¿½tico durante la inicializaciï¿½n de la base de datos.");
+        throw; // Re-lanzar para detener la aplicaciï¿½n si no se puede inicializar la BD
     }
 }

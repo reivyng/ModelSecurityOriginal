@@ -26,8 +26,51 @@ namespace Entity.Context
         public DbSet<RolFormPermission> RolFormPermissions { get; set; }
         public DbSet<Person> Persons { get; set; }
 
+        // Nuevas entidades
+        public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<Producto> Productos { get; set; }
+        public DbSet<Proveedor> Proveedores { get; set; }
+        public DbSet<ProductoProveedor> ProductoProveedores { get; set; }
+        public DbSet<Bodega> Bodegas { get; set; }
+        public DbSet<Movimiento> Movimientos { get; set; }
+        public DbSet<DetalleMovimiento> DetalleMovimientos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Restricciones de longitud para compatibilidad MySQL
+            modelBuilder.Entity<Categoria>()
+                .Property(c => c.nombre)
+                .HasMaxLength(100);
+            modelBuilder.Entity<Producto>()
+                .Property(p => p.nombre)
+                .HasMaxLength(100);
+            modelBuilder.Entity<Producto>()
+                .Property(p => p.estado)
+                .HasMaxLength(20);
+            modelBuilder.Entity<Proveedor>()
+                .Property(pv => pv.nombre_empresa)
+                .HasMaxLength(100);
+            modelBuilder.Entity<Proveedor>()
+                .Property(pv => pv.contacto)
+                .HasMaxLength(100);
+            modelBuilder.Entity<Proveedor>()
+                .Property(pv => pv.telefono)
+                .HasMaxLength(20);
+            modelBuilder.Entity<Proveedor>()
+                .Property(pv => pv.correo)
+                .HasMaxLength(100);
+            modelBuilder.Entity<Proveedor>()
+                .Property(pv => pv.direccion)
+                .HasMaxLength(150);
+            modelBuilder.Entity<Bodega>()
+                .Property(b => b.nombre)
+                .HasMaxLength(100);
+            modelBuilder.Entity<Bodega>()
+                .Property(b => b.ubicacion)
+                .HasMaxLength(150);
+            modelBuilder.Entity<Bodega>()
+                .Property(b => b.encargado)
+                .HasMaxLength(100);
             modelBuilder.Entity<FormModule>()
                 .HasOne(fm => fm.Form)
                 .WithMany(f => f.FormModule)
@@ -65,6 +108,42 @@ namespace Entity.Context
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            // Relaciones para nuevas entidades
+            modelBuilder.Entity<Producto>()
+                .HasOne(p => p.Categoria)
+                .WithMany(c => c.Productos)
+                .HasForeignKey(p => p.id_categoria);
+
+            modelBuilder.Entity<ProductoProveedor>()
+                .HasKey(pp => new { pp.id_producto, pp.id_proveedor });
+            modelBuilder.Entity<ProductoProveedor>()
+                .HasOne(pp => pp.Producto)
+                .WithMany(p => p.ProductoProveedores)
+                .HasForeignKey(pp => pp.id_producto);
+            modelBuilder.Entity<ProductoProveedor>()
+                .HasOne(pp => pp.Proveedor)
+                .WithMany(pv => pv.ProductoProveedores)
+                .HasForeignKey(pp => pp.id_proveedor);
+
+            modelBuilder.Entity<DetalleMovimiento>()
+                .HasKey(dm => new { dm.id_movimiento, dm.id_producto });
+            modelBuilder.Entity<DetalleMovimiento>()
+                .HasOne(dm => dm.Movimiento)
+                .WithMany(m => m.DetalleMovimientos)
+                .HasForeignKey(dm => dm.id_movimiento);
+            modelBuilder.Entity<DetalleMovimiento>()
+                .HasOne(dm => dm.Producto)
+                .WithMany(p => p.DetalleMovimientos)
+                .HasForeignKey(dm => dm.id_producto);
+
+            modelBuilder.Entity<Movimiento>()
+                .HasOne(m => m.Bodega)
+                .WithMany(b => b.Movimientos)
+                .HasForeignKey(m => m.id_bodega);
+            modelBuilder.Entity<Movimiento>()
+                .HasOne(m => m.User)
+                .WithMany()
+                .HasForeignKey(m => m.id_usuario);
         }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

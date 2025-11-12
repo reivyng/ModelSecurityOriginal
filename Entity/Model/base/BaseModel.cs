@@ -1,4 +1,6 @@
-﻿namespace Entity.Model
+﻿using System;
+
+namespace Entity.Model
 {
     public class BaseModel
     {

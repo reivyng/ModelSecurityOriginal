@@ -6,5 +6,8 @@ namespace Data.Interfaces
     {
         // Obtener usuarios con filtros específicos de User
         Task<List<User>> GetAllAsync(bool? active, string? emailSearch);
+
+        // Buscar usuario por email (para autenticación)
+        Task<User?> FindByEmailAsync(string email);
     }
 }

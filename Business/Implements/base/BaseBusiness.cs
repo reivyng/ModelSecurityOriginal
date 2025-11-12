@@ -135,7 +135,7 @@ namespace Business.Implements
         /// <summary>
         /// Actualiza parcialmente una entidad (PATCH) aplicando solo los campos modificados.
         /// </summary>
-        public override async Task<bool> PatchAsync(object id, D patchDto)
+        public override async Task<bool> PatchAsync(object id, D patchDto, List<string> presentProps)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id), "El identificador no puede ser nulo.");

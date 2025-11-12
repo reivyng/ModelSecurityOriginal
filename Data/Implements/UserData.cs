@@ -12,6 +12,11 @@ namespace Data.Implements
         public UserData(ApplicationDbContext context) : base(context) { }
         // Métodos adicionales específicos de User
 
+        public async Task<User?> FindByEmailAsync(string email)
+        {
+            return await _dbSet.FirstOrDefaultAsync(u => u.email == email);
+        }
+
         public async Task<List<User>> GetAllAsync(bool? active, string? emailSearch)
         {
             var query = _dbSet.AsQueryable();

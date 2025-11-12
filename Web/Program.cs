@@ -78,6 +78,20 @@ builder.Services.AddScoped<IModuleBusiness, ModuleBusiness>();
 builder.Services.AddScoped<IRolFormPermissionData, RolFormPermissionData>();
 builder.Services.AddScoped<IRolFormPermissionBusiness, RolFormPermissionBusiness>();
 
+builder.Services.AddScoped<ICategoriaData, CategoriaData>();
+builder.Services.AddScoped<ICategoriaBusiness, CategoriaBusiness>();
+builder.Services.AddScoped<IProductoData, ProductoData>();
+builder.Services.AddScoped<IProductoBusiness, ProductoBusiness>();
+builder.Services.AddScoped<IProveedorData, ProveedorData>();
+builder.Services.AddScoped<IProveedorBusiness, ProveedorBusiness>();
+builder.Services.AddScoped<IProductoProveedorData, ProductoProveedorData>();
+builder.Services.AddScoped<IProductoProveedorBusiness, ProductoProveedorBusiness>();
+builder.Services.AddScoped<IBodegaData, BodegaData>();
+builder.Services.AddScoped<IBodegaBusiness, BodegaBusiness>();
+builder.Services.AddScoped<IMovimientoData, MovimientoData>();
+builder.Services.AddScoped<IMovimientoBusiness, MovimientoBusiness>();
+builder.Services.AddScoped<IDetalleMovimientoData, DetalleMovimientoData>();
+builder.Services.AddScoped<IDetalleMovimientoBusiness, DetalleMovimientoBusiness>();
 
 // Registrar perfiles de AutoMapper
 builder.Services.AddAutoMapper(cfg => {
@@ -89,6 +103,7 @@ builder.Services.AddAutoMapper(cfg => {
     cfg.AddProfile<FormModuleProfile>();
     cfg.AddProfile<ModuleProfile>();
     cfg.AddProfile<RolFormPermissionProfile>();
+    cfg.AddProfile<InventarioProfile>();
 });
 
 var app = builder.Build();
@@ -99,17 +114,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Sistema de Gestión v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Sistema de Gestiï¿½n v1");
         c.RoutePrefix = string.Empty;
     });
 }
 
-// Usa la política de CORS registrada en ApplicationServiceExtensions
+// Usa la polï¿½tica de CORS registrada en ApplicationServiceExtensions
 app.UseCors("AllowSpecificOrigins");
 
 app.UseHttpsRedirection();
 
-// Autenticación y autorización
+// Autenticaciï¿½n y autorizaciï¿½n
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -160,7 +175,7 @@ static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider)
                 logger.LogInformation("Base de datos eliminada.");
 
                 await dbContext.Database.MigrateAsync();
-                logger.LogInformation("Base de datos recreada con éxito.");
+                logger.LogInformation("Base de datos recreada con ï¿½xito.");
             }
         }
         else
@@ -171,7 +186,7 @@ static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider)
         // Verificar conectividad
         if (await dbContext.Database.CanConnectAsync())
         {
-            logger.LogInformation("Conexión a la base de datos verificada exitosamente.");
+            logger.LogInformation("Conexiï¿½n a la base de datos verificada exitosamente.");
         }
         else
         {
@@ -180,7 +195,7 @@ static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider)
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Error crítico durante la inicialización de la base de datos.");
-        throw; // Re-lanzar para detener la aplicación si no se puede inicializar la BD
+        logger.LogError(ex, "Error crï¿½tico durante la inicializaciï¿½n de la base de datos.");
+        throw; // Re-lanzar para detener la aplicaciï¿½n si no se puede inicializar la BD
     }
 }
